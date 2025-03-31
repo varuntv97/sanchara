@@ -242,7 +242,7 @@ Ensure the following environment variables are set in your production environmen
 - `UNSPLASH_ACCESS_KEY`
 - `NEXT_PUBLIC_APP_URL`
 
-## Contributing
+<!-- ## Contributing
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/your-feature-name`
@@ -254,7 +254,7 @@ Please ensure your code follows the project's coding standards and includes appr
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the LICENSE file for details. -->
 
 ## Acknowledgements
 
@@ -262,7 +262,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Supabase for the backend infrastructure
 - Vercel for hosting and deployment
 - Unsplash for destination images
-- All contributors who have helped build Sanchara
 
 ---
 
