@@ -1,6 +1,4 @@
-# Sanchara - AI-Powered Travel Planner
-
-![Sanchara Logo](./public/logo.png)
+# Sanchara - AI-Powered Travel Planner ![Sanchara Logo](./public/logo.png)
 
 ## Overview
 
