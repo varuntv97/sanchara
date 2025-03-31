@@ -266,6 +266,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ---
 
 © 2025 Sanchara Travel Planner. All rights reserved.
+[Varun TV](https://www.varuntv.me/)
 
 ```plaintext
 
