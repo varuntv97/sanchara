@@ -4,7 +4,7 @@ import { createStorageService } from "@/lib/storage-service"
 
 export async function GET(request: Request) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const storageService = createStorageService();
 
     // Check if user is authenticated

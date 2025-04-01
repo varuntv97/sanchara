@@ -5,7 +5,7 @@ import { fetchDestinationImage } from "@/lib/image-service"
 
 export async function POST(request: Request) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Check if user is authenticated
     const {

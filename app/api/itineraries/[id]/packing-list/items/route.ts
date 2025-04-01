@@ -4,19 +4,22 @@ import { createStorageService } from "@/lib/storage-service"
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   try {
-    const supabase = createClient()
+    // Await params to ensure it's fully resolved
+    const { id } = await params
+
+    const supabase = await createClient()
     const storageService = createStorageService();
 
     // Check if user is authenticated
     const {
-      data: { session },
-    } = await supabase.auth.getSession()
-    if (!session) {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     // Get the packing list
-    const packingList = await storageService.getPackingList(params.id, session.user.id)
+    const packingList = await storageService.getPackingList(id, user.id)
     if (!packingList) {
       return NextResponse.json({ error: "Packing list not found" }, { status: 404 })
     }
@@ -41,4 +44,6 @@ export async function POST(request: Request, { params }: { params: { id: string 
     return NextResponse.json({ error: "Failed to add packing item" }, { status: 500 })
   }
 }
+
+
 

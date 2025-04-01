@@ -4,7 +4,7 @@ import { createStorageService } from "@/lib/storage-service";
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const storageService = createStorageService();
 
     // Check if user is authenticated
@@ -26,7 +26,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const storageService = createStorageService();
 
     // Check if user is authenticated
@@ -50,7 +50,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const storageService = createStorageService();
 
     // Check if user is authenticated
