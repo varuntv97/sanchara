@@ -330,5 +330,8 @@ export class StorageService {
 }
 
 // Create a singleton instance
-export const storageService = new StorageService()
+// export const storageService = new StorageService()
+
+export const createStorageService = () => new StorageService();
+
 

@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
-import { storageService } from "@/lib/storage-service"
+import { createStorageService } from "@/lib/storage-service"
 
 export async function POST(request: Request, { params }: { params: { id: string; dayId: string } }) {
   try {
     const supabase = createClient()
+    const storageService = createStorageService();
 
     // Check if user is authenticated
     const {
@@ -31,6 +32,7 @@ export async function POST(request: Request, { params }: { params: { id: string;
 export async function PUT(request: Request, { params }: { params: { id: string; dayId: string } }) {
   try {
     const supabase = createClient()
+    const storageService = createStorageService();
 
     // Check if user is authenticated
     const {

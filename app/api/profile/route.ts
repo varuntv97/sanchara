@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
-import { storageService } from "@/lib/storage-service"
+import { createStorageService } from "@/lib/storage-service"
 
 export async function GET(request: Request) {
   try {
     const supabase = createClient()
+    const storageService = createStorageService();
 
     // Check if user is authenticated
     const {
@@ -26,6 +27,7 @@ export async function GET(request: Request) {
 export async function PUT(request: Request) {
   try {
     const supabase = createClient()
+    const storageService = createStorageService();
 
     // Check if user is authenticated
     const {
