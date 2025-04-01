@@ -9,18 +9,18 @@ type PackingList = Database["public"]["Tables"]["packing_lists"]["Row"]
 type PackingItemDB = Database["public"]["Tables"]["packing_items"]["Row"]
 
 export class StorageService {
-  private supabase = createClient()
-
   // Profile CRUD operations
   async getProfile(userId: string) {
-    const { data, error } = await this.supabase.from("profiles").select("*").eq("id", userId).single()
+    const supabase = await createClient()
+    const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).single()
 
     if (error) throw error
     return data
   }
 
   async updateProfile(userId: string, profile: Partial<Profile>) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient()
+    const { data, error } = await supabase
       .from("profiles")
       .update({
         ...profile,
@@ -36,7 +36,8 @@ export class StorageService {
 
   // Itinerary CRUD operations
   async getItineraries(userId: string) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient()
+    const { data, error } = await supabase
       .from("itineraries")
       .select("*")
       .eq("user_id", userId)
@@ -47,7 +48,8 @@ export class StorageService {
   }
 
   async getItinerary(itineraryId: string, userId: string) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient()
+    const { data, error } = await supabase
       .from("itineraries")
       .select("*")
       .eq("id", itineraryId)
@@ -59,7 +61,8 @@ export class StorageService {
   }
 
   async createItinerary(itinerary: Omit<Itinerary, "id" | "created_at" | "updated_at">) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient()
+    const { data, error } = await supabase
       .from("itineraries")
       .insert({
         ...itinerary,
@@ -74,7 +77,8 @@ export class StorageService {
   }
 
   async updateItinerary(itineraryId: string, userId: string, itinerary: Partial<Itinerary>) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient()
+    const { data, error } = await supabase
       .from("itineraries")
       .update({
         ...itinerary,
@@ -90,7 +94,8 @@ export class StorageService {
   }
 
   async deleteItinerary(itineraryId: string, userId: string) {
-    const { error } = await this.supabase.from("itineraries").delete().eq("id", itineraryId).eq("user_id", userId)
+    const supabase = await createClient()
+    const { error } = await supabase.from("itineraries").delete().eq("id", itineraryId).eq("user_id", userId)
 
     if (error) throw error
     return true
@@ -98,7 +103,8 @@ export class StorageService {
 
   // Itinerary Day CRUD operations
   async getItineraryDays(itineraryId: string) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient()
+    const { data, error } = await supabase
       .from("itinerary_days")
       .select("*")
       .eq("itinerary_id", itineraryId)
@@ -109,7 +115,8 @@ export class StorageService {
   }
 
   async getItineraryDay(dayId: string, itineraryId: string) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient()
+    const { data, error } = await supabase
       .from("itinerary_days")
       .select("*")
       .eq("id", dayId)
@@ -121,7 +128,8 @@ export class StorageService {
   }
 
   async createItineraryDay(day: Omit<ItineraryDay, "id" | "created_at" | "updated_at">) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient()
+    const { data, error } = await supabase
       .from("itinerary_days")
       .insert({
         ...day,
@@ -136,7 +144,8 @@ export class StorageService {
   }
 
   async updateItineraryDay(dayId: string, itineraryId: string, day: Partial<ItineraryDay>) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient()
+    const { data, error } = await supabase
       .from("itinerary_days")
       .update({
         ...day,
@@ -152,11 +161,8 @@ export class StorageService {
   }
 
   async deleteItineraryDay(dayId: string, itineraryId: string) {
-    const { error } = await this.supabase
-      .from("itinerary_days")
-      .delete()
-      .eq("id", dayId)
-      .eq("itinerary_id", itineraryId)
+    const supabase = await createClient()
+    const { error } = await supabase.from("itinerary_days").delete().eq("id", dayId).eq("itinerary_id", itineraryId)
 
     if (error) throw error
     return true
@@ -220,8 +226,9 @@ export class StorageService {
 
   // Packing List operations
   async getPackingList(itineraryId: string, userId: string) {
+    const supabase = await createClient()
     // Check if packing list exists
-    const { data: packingList, error: packingListError } = await this.supabase
+    const { data: packingList, error: packingListError } = await supabase
       .from("packing_lists")
       .select("*")
       .eq("itinerary_id", itineraryId)
@@ -237,7 +244,7 @@ export class StorageService {
     }
 
     // Get packing items
-    const { data: items, error: itemsError } = await this.supabase
+    const { data: items, error: itemsError } = await supabase
       .from("packing_items")
       .select("*")
       .eq("packing_list_id", packingList.id)
@@ -254,8 +261,9 @@ export class StorageService {
   }
 
   async createPackingList(itineraryId: string, userId: string, items: PackingItem[]) {
+    const supabase = await createClient()
     // First, create the packing list
-    const { data: packingList, error: packingListError } = await this.supabase
+    const { data: packingList, error: packingListError } = await supabase
       .from("packing_lists")
       .insert({
         itinerary_id: itineraryId,
@@ -282,7 +290,7 @@ export class StorageService {
         updated_at: new Date().toISOString(),
       }))
 
-      const { error: itemsError } = await this.supabase.from("packing_items").insert(packingItems)
+      const { error: itemsError } = await supabase.from("packing_items").insert(packingItems)
 
       if (itemsError) throw itemsError
     }
@@ -291,7 +299,8 @@ export class StorageService {
   }
 
   async updatePackingItem(itemId: string, updates: Partial<PackingItemDB>) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient()
+    const { data, error } = await supabase
       .from("packing_items")
       .update({
         ...updates,
@@ -306,7 +315,8 @@ export class StorageService {
   }
 
   async addPackingItem(packingListId: string, item: Omit<PackingItemDB, "id" | "created_at" | "updated_at">) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient()
+    const { data, error } = await supabase
       .from("packing_items")
       .insert({
         ...item,
@@ -322,7 +332,8 @@ export class StorageService {
   }
 
   async deletePackingItem(itemId: string) {
-    const { error } = await this.supabase.from("packing_items").delete().eq("id", itemId)
+    const supabase = await createClient()
+    const { error } = await supabase.from("packing_items").delete().eq("id", itemId)
 
     if (error) throw error
     return true
@@ -330,5 +341,7 @@ export class StorageService {
 }
 
 // Create a singleton instance
-export const storageService = new StorageService()
+// export const storageService = new StorageService()
+
+export const createStorageService = () => new StorageService();
 

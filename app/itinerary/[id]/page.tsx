@@ -409,7 +409,8 @@ export default function ItineraryPage() {
                                   {activity.type}
                                 </Badge>
                                 <a
-                                  href={activity.link}
+                                  // href={activity.link}
+                                  href="/"
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-sm text-primary hover:underline group flex items-center"

@@ -15,6 +15,7 @@ import { Loader2, Plane } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { ItineraryLoadingUI } from "./loading-ui"
 
 const interests = [
   { id: "food", label: "Food & Cuisine" },
@@ -83,6 +84,8 @@ export default function CreateItineraryPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
+  const [loadingStage, setLoadingStage] = useState<string>("idle")
+  const [progress, setProgress] = useState<number>(0)
 
   const handleInterestChange = (interest: string) => {
     setSelectedInterests((prev) => (prev.includes(interest) ? prev.filter((i) => i !== interest) : [...prev, interest]))
@@ -127,23 +130,21 @@ export default function CreateItineraryPage() {
   // Update the handleSubmit function to handle specific error cases
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
-    if (selectedInterests.length === 0) {
-      toast({
-        title: "Please select at least one interest",
-        variant: "destructive",
-      })
-      return
-    }
-
     setIsLoading(true)
+    setLoadingStage("preparing")
+    setProgress(10)
 
     try {
+      // Signal that we're making the API request
+      setLoadingStage("generating")
+      setProgress(30)
+
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 90000) // 90-second timeout
+
       const response = await fetch("/api/generate-itinerary", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           destination,
           startDate,
@@ -156,9 +157,15 @@ export default function CreateItineraryPage() {
           accessibilityNeeds: selectedAccessibilityNeeds,
           additionalNotes,
         }),
+        signal: controller.signal,
       })
 
+      clearTimeout(timeoutId)
+      setProgress(70)
+      setLoadingStage("processing")
+
       const data = await response.json()
+      setProgress(90)
 
       if (!response.ok) {
         if (response.status === 429) {
@@ -166,6 +173,9 @@ export default function CreateItineraryPage() {
         }
         throw new Error(data.error || "Failed to generate itinerary")
       }
+
+      setProgress(100)
+      setLoadingStage("complete")
 
       toast({
         title: "Itinerary created!",
@@ -355,18 +365,16 @@ export default function CreateItineraryPage() {
             </Accordion>
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating Itinerary...
-                </>
-              ) : (
-                <>
-                  Generate Itinerary
-                  <Plane />
-                </>
-              )}
-            </Button>
+            {isLoading ? (
+              <div className="w-full">
+                <ItineraryLoadingUI stage={loadingStage} progress={progress} />
+              </div>
+            ) : (
+              <Button type="submit" className="w-full">
+                Generate Itinerary
+                <Plane className="ml-2 h-4 w-4" />
+              </Button>
+            )}
           </CardFooter>
         </form>
       </Card>
